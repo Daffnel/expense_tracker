@@ -48,28 +48,30 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Fluttter Expense Tracker"),
-          actions: [
-            IconButton(
-              onPressed: _openExpenseOverlay,
-              icon: const Icon(Icons.add),
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Text("The chart"),
-            Expanded(
-              child: ExpensesList(
-                expensesList: _registeredExpenses,
-                onRemoveExpense: _removeExpense,
-              ),
-            ),
-          ],
-        ),
+    Widget mainContent = Center(child: Text("No Expense Data found..."));
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Fluttter Expense Tracker"),
+        actions: [
+          IconButton(
+            onPressed: _openExpenseOverlay,
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Text("The chart"),
+          Expanded(
+            child: _registeredExpenses.isNotEmpty
+                ? ExpensesList(
+                    expensesList: _registeredExpenses,
+                    onRemoveExpense: _removeExpense,
+                  )
+                : mainContent,
+          ),
+        ],
       ),
     );
   }
