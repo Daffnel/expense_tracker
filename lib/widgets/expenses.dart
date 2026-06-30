@@ -26,27 +26,50 @@ class _ExpensesState extends State<Expenses> {
     ),
   ];
 
+  void _addExpense(Expense expense) {
+    setState(() {
+      _registeredExpenses.add(expense);
+    });
+  }
+
+  void _removeExpense(Expense expense) {
+    setState(() {
+      _registeredExpenses.remove(expense);
+    });
+  }
+
   void _openExpenseOverlay() {
-    showModalBottomSheet(context: context, builder: (ctx) => const NewExpenses());
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (ctx) => NewExpenses(onAddexpense: _addExpense),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Fluttter Expense Tracker"),
-        actions: [
-          IconButton(
-            onPressed: _openExpenseOverlay,
-            icon: const Icon(Icons.add),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Text("The chart"),
-          Expanded(child: ExpensesList(expensesList: _registeredExpenses)),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Fluttter Expense Tracker"),
+          actions: [
+            IconButton(
+              onPressed: _openExpenseOverlay,
+              icon: const Icon(Icons.add),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Text("The chart"),
+            Expanded(
+              child: ExpensesList(
+                expensesList: _registeredExpenses,
+                onRemoveExpense: _removeExpense,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
