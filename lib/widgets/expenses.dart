@@ -33,9 +33,27 @@ class _ExpensesState extends State<Expenses> {
   }
 
   void _removeExpense(Expense expense) {
+    final expenseIndex = _registeredExpenses.indexOf(expense);
+
     setState(() {
       _registeredExpenses.remove(expense);
     });
+    ScaffoldMessenger.of(context).clearSnackBars(); // ta bort ev. gamla snackbars
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        persist: false,
+        content: Text("Expense Deleted"),
+        duration: Duration(seconds: 4),
+        action: SnackBarAction(
+          label: "Undo",
+          onPressed: () {
+            setState(() {
+              _registeredExpenses.insert(expenseIndex, expense);
+            });
+          },
+        ),
+      ),
+    );
   }
 
   void _openExpenseOverlay() {
@@ -48,7 +66,7 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
-    Widget mainContent = Center(child: Text("No Expense Data found..."));
+    Widget mainContent = Center(child: const Text("No Expense Data found..."));
 
     return Scaffold(
       appBar: AppBar(
