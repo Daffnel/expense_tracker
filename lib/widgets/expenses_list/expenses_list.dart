@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 //Wiget för att visa lista med utgifter
 
 class ExpensesList extends StatelessWidget {
-  const ExpensesList({required this.expensesList, super.key});
+  const ExpensesList({required this.expensesList, required this.onRemoveExpense, super.key});
+
+  final void Function(Expense expense) onRemoveExpense;
 
   final List<Expense> expensesList;
 
@@ -13,7 +15,15 @@ class ExpensesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: expensesList.length,
-      itemBuilder: (ctx, index) => ExpenseItem(expensesList[index]),
+      itemBuilder: (ctx, index) => Dismissible(
+        onDismissed: (direction) {
+          onRemoveExpense(expensesList[index]);
+        },
+        key: ValueKey(expensesList[index]),
+        child: ExpenseItem(
+          expensesList[index],
+        ),
+      ),
     );
   }
 }
