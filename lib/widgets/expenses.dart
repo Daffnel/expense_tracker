@@ -59,6 +59,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _openExpenseOverlay() {
     showModalBottomSheet(
+      useSafeArea: true,
       isScrollControlled: true,
       context: context,
       builder: (ctx) => NewExpenses(onAddexpense: _addExpense),
@@ -67,30 +68,51 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("Bredd: ${MediaQuery.of(context).size.width.toString()}");
+    debugPrint("Höjd: ${MediaQuery.of(context).size.height.toString()}");
+
+    final width = MediaQuery.of(context).size.width;
+
     Widget mainContent = Center(child: const Text("No Expense Data found..."));
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Fluttter Expense Tracker"),
-        actions: [
-          IconButton(
-            onPressed: _openExpenseOverlay,
-            icon: const Icon(Icons.add),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Chart(expenses: _registeredExpenses),
-          Expanded(
-            child: _registeredExpenses.isNotEmpty
-                ? ExpensesList(
-                    expensesList: _registeredExpenses,
-                    onRemoveExpense: _removeExpense,
-                  )
-                : mainContent,
-          ),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Fluttter Expense Tracker"),
+          actions: [
+            IconButton(
+              onPressed: _openExpenseOverlay,
+              icon: const Icon(Icons.add),
+            ),
+          ],
+        ),
+        body: width < 600
+            ? Column(
+                children: [
+                  Chart(expenses: _registeredExpenses),
+                  Expanded(
+                    child: _registeredExpenses.isNotEmpty
+                        ? ExpensesList(
+                            expensesList: _registeredExpenses,
+                            onRemoveExpense: _removeExpense,
+                          )
+                        : mainContent,
+                  ),
+                ],
+              )
+            : Row(
+                children: [
+                  Expanded(child: Chart(expenses: _registeredExpenses)),
+                  Expanded(
+                    child: _registeredExpenses.isNotEmpty
+                        ? ExpensesList(
+                            expensesList: _registeredExpenses,
+                            onRemoveExpense: _removeExpense,
+                          )
+                        : mainContent,
+                  ),
+                ],
+              ),
       ),
     );
   }
